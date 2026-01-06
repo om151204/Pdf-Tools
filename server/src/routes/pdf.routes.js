@@ -13,3 +13,7 @@ router.post("/split", upload.array("files", 1), splitPdfController);
 router.post("/compress", upload.array("files", 1), compressPdfController);
 
 module.exports = router;
+
+router.get("/test", (req, res) => {
+  res.json({ status: "PDF routes working" });
+});
