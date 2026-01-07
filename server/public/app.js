@@ -12,10 +12,10 @@ app.use(express.json());
 // API routes
 app.use("/api/pdf", pdfRoutes);
 
-// Serve static files
+// Serve static frontend
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// Force root to index.html
+// Fallback for root
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
