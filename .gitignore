@@ -2,10 +2,10 @@
 node_modules/
 npm-debug.log*
 
-# Env
+# Environment
 .env
 
-# Uploads & output
+# User files
 server/uploads/
 server/output/
 
