@@ -3,7 +3,9 @@ const upload = require("../middlewares/upload.middleware");
 const {
   mergePDF,
   splitPdfController,
-  compressPdfController
+  compressPdfController,
+  imagesToPdfController,
+  pdfToImagesController
 } = require("../controllers/pdf.controller");
 
 const router = express.Router();
@@ -11,6 +13,8 @@ const router = express.Router();
 router.post("/merge", upload.array("files", 10), mergePDF);
 router.post("/split", upload.array("files", 1), splitPdfController);
 router.post("/compress", upload.array("files", 1), compressPdfController);
+router.post("/to-images", upload.array("files",1),pdfToImagesController);
+router.post("/from-images",upload.array("files",10),imagesToPdfController)
 
 module.exports = router;
 

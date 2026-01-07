@@ -2,6 +2,8 @@ const { mergePDFs } = require("../services/pdfMerge.service");
 const { splitPDF } = require("../services/pdfSplit.service");
 const { compressPDF } = require("../services/pdfCompress.service");
 const cleanupFiles = require("../utils/fileCleanup");
+const { pdfToImages } = require("../services/pdfToImages.service");
+const { imagesToPdf } = require("../services/imagesToPdf.service");
 
 async function mergePDF(req, res) {
   if (!req.files || req.files.length < 2)
@@ -34,8 +36,21 @@ async function compressPdfController(req, res) {
   res.download(output);
 }
 
+async function pdfToImagesController(req, res) {
+  const imagePaths = await pdfToImages(req.files[0]);
+  res.json({ images: imagePaths });
+}
+
+async function imagesToPdfController(req, res) {
+  const output = await imagesToPdf(req.files);
+  res.download(output);
+}
+
 module.exports = {
   mergePDF,
   splitPdfController,
-  compressPdfController
+  compressPdfController,
+  pdfToImagesController,
+  imagesToPdfController
 };
+
