@@ -1,13 +1,49 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pdf_tools</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Open PDF Tools</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Open PDF Tools</h1>
+
+  <!-- MERGE -->
+  <section>
+    <h2>Merge PDFs</h2>
+    <input type="file" id="mergeFiles" multiple />
+    <button onclick="mergePDF()">Merge</button>
+  </section>
+
+  <!-- SPLIT -->
+  <section>
+    <h2>Split PDF</h2>
+    <input type="file" id="splitFile" />
+    <input type="number" id="startPage" placeholder="Start page" />
+    <input type="number" id="endPage" placeholder="End page" />
+    <button onclick="splitPDF()">Split</button>
+  </section>
+
+  <!-- COMPRESS -->
+  <section>
+    <h2>Compress PDF</h2>
+    <input type="file" id="compressFile" />
+    <button onclick="compressPDF()">Compress</button>
+  </section>
+
+  <!-- PDF TO IMAGES -->
+  <section>
+    <h2>PDF → Images</h2>
+    <input type="file" id="pdfToImagesFile" />
+    <button onclick="pdfToImages()">Convert</button>
+  </section>
+
+  <!-- IMAGES TO PDF -->
+  <section>
+    <h2>Images → PDF</h2>
+    <input type="file" id="imagesToPdfFiles" multiple />
+    <button onclick="imagesToPDF()">Convert</button>
+  </section>
+
+  <script src="app.js"></script>
+</body>
 </html>

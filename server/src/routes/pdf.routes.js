@@ -16,6 +16,16 @@ router.post("/compress", upload.array("files", 1), compressPdfController);
 router.post("/to-images", upload.array("files",1),pdfToImagesController);
 router.post("/from-images",upload.array("files",10),imagesToPdfController)
 
+const fs = require("fs");
+const path = require("path");
+
+router.get("/files", (req, res) => {
+  const dir = path.join(__dirname, "../../output");
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
+  res.json(files);
+});
+
+
 module.exports = router;
 
 router.get("/test", (req, res) => {

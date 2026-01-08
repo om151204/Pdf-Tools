@@ -1,23 +1,23 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
+console.log("app.js loaded");
 
-const pdfRoutes = require("./routes/pdf.routes");
+let redirectUrl = "";
 
-const app = express();
+function openDialog(title, desc, url) {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalDesc").innerText = desc;
+  redirectUrl = url;
 
-app.use(cors());
-app.use(express.json());
+  document.getElementById("modal").classList.add("active");
+}
 
-// API routes
-app.use("/api/pdf", pdfRoutes);
+function closeDialog() {
+  document.getElementById("modal").classList.remove("active");
+}
 
-// Serve static frontend
-app.use(express.static(path.join(__dirname, "..", "public")));
-
-// Fallback for root
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-});
-
-module.exports = app;
+function proceed() {
+  if (!redirectUrl) {
+    alert("No destination set");
+    return;
+  }
+  window.location.href = redirectUrl;
+}

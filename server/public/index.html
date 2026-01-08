@@ -1,18 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Open PDF Tools</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
+<div class="container">
   <h1>Open PDF Tools</h1>
+  <p class="subtitle">Choose a tool to continue</p>
 
-  <section>
-    <h2>Merge PDFs</h2>
-    <input type="file" id="mergeFiles" multiple />
-    <button onclick="mergePDF()">Merge</button>
-  </section>
+  <div class="grid">
+    <div class="card home-card" onclick="openDialog('Merge PDFs','Combine multiple PDF files into one document','/merge.html')">
+      <h2>Merge PDFs</h2>
+      <p>Combine multiple PDFs</p>
+    </div>
 
-  <script src="app.js"></script>
+    <div class="card home-card" onclick="openDialog('Split PDF','Extract selected pages from a PDF','/split.html')">
+      <h2>Split PDF</h2>
+      <p>Extract pages</p>
+    </div>
+
+    <div class="card home-card" onclick="openDialog('Compress PDF','Reduce PDF file size','/compress.html')">
+      <h2>Compress PDF</h2>
+      <p>Reduce file size</p>
+    </div>
+
+    <div class="card home-card" onclick="openDialog('PDF → Images','Convert PDF pages into images','/pdf-to-images.html')">
+      <h2>PDF → Images</h2>
+      <p>Convert pages</p>
+    </div>
+
+    <div class="card home-card" onclick="openDialog('Images → PDF','Create a PDF from images','/images-to-pdf.html')">
+      <h2>Images → PDF</h2>
+      <p>Create PDF</p>
+    </div>
+
+    <div class="card home-card highlight" onclick="openDialog('Stored Files','View generated files','/files.html')">
+      <h2>Stored Files</h2>
+      <p>View output files</p>
+    </div>
+  </div>
+
+  <footer class="footer-credit">
+    <p>Made with <span class="heart">❤️</span> by <strong>Om Amit Mishra</strong></p>
+    <p class="family">Son of Amit &amp; Asha</p>
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+
+    <div class="modal-actions">
+      <button class="secondary-btn" onclick="closeDialog()">Cancel</button>
+      <button class="primary-btn" onclick="proceed()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
 </body>
 </html>

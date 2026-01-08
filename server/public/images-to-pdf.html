@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Images to PDF</title>
+  <style>
+    body { background:#0f2027; color:white; font-family:"Segoe UI"; }
+    .container {
+      max-width:520px; margin:70px auto; background:#203a43;
+      padding:30px; border-radius:14px; box-shadow:0 15px 40px rgba(0,0,0,0.4);
+    }
+    .back { color:#38bdf8; text-decoration:none; }
+    .file-box {
+      margin-top:20px; padding:16px; border:2px dashed #38bdf8;
+      border-radius:12px; text-align:center; cursor:pointer;
+    }
+    input { display:none; }
+    button {
+      width:100%; margin-top:25px; padding:14px;
+      border-radius:12px; border:none; background:#38bdf8;
+      font-weight:bold; cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back" href="/">← Back to Home</a>
+  <h2>Images → PDF</h2>
+
+  <label class="file-box">
+    Select image files
+    <input type="file" id="imagesToPdfFiles" multiple>
+  </label>
+
+  <button onclick="imagesToPDF()">Convert</button>
+</div>
+
+<script>
+async function imagesToPDF() {
+  const fd = new FormData();
+  for (const f of imagesToPdfFiles.files) fd.append("files", f);
+
+  const res = await fetch("/api/pdf/from-images", { method:"POST", body:fd });
+  const blob = await res.blob();
+  window.open(URL.createObjectURL(blob));
+}
+</script>
+
+</body>
+</html>

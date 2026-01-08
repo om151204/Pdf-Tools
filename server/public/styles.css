@@ -1,0 +1,143 @@
+* {
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+}
+
+.container {
+  max-width: 1300px;
+  margin: auto;
+  padding: 60px 30px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  opacity: 0.85;
+  margin-bottom: 50px;
+}
+
+/* ===== GRID 3×3 ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ===== CARD ===== */
+.card {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px);
+  border-radius: 18px;
+  padding: 30px;
+  min-height: 220px;
+  cursor: pointer;
+  transition: 0.35s;
+}
+
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+
+.card p { opacity: 0.8; }
+
+.highlight {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+/* ===== FOOTER ===== */
+.footer-credit {
+  margin-top: 70px;
+  opacity: 0.75;
+}
+
+.footer-credit strong { color: #38bdf8; }
+
+.heart { font-size: 1.1rem; }
+
+.family {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal p { opacity: 0.85; margin-bottom: 25px; }
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.primary-btn, .secondary-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: white;
+}
+
+.secondary-btn {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stored Files</title>
+  <style>
+    body {
+      background: #0f2027;
+      color: white;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 70px auto;
+      background: #203a43;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      margin-top: 10px;
+    }
+
+    .back {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 25px;
+    }
+
+    li {
+      background: rgba(255,255,255,0.08);
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 420px;
+    }
+
+    .download-btn {
+      background: #38bdf8;
+      color: black;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .download-btn:hover {
+      background: #60d0ff;
+    }
+
+    .empty {
+      opacity: 0.7;
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back" href="/">← Back to Home</a>
+  <h2>Stored Files</h2>
+  <p>Previously generated files</p>
+
+  <ul id="fileList"></ul>
+  <p id="emptyMsg" class="empty" style="display:none;">No files found</p>
+</div>
+
+<script>
+fetch("/api/pdf/files")
+  .then(res => res.json())
+  .then(files => {
+    const ul = document.getElementById("fileList");
+    const empty = document.getElementById("emptyMsg");
+
+    if (!files.length) {
+      empty.style.display = "block";
+      return;
+    }
+
+    files.forEach(file => {
+      const li = document.createElement("li");
+
+      li.innerHTML = `
+        <span class="file-name">${file}</span>
+        <a class="download-btn" href="/output/${file}" download>
+          Download
+        </a>
+      `;
+
+      ul.appendChild(li);
+    });
+  })
+  .catch(() => {
+    alert("Failed to load files");
+  });
+</script>
+
+</body>
+</html>
