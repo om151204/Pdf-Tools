@@ -5,43 +5,108 @@
   <style>
     body {
       background: #0f2027;
-      color: #fff;
+      color: #ffffff;
       font-family: "Segoe UI", sans-serif;
     }
+
     .container {
-      max-width: 520px;
+      max-width: 600px;
       margin: 70px auto;
       background: #203a43;
-      padding: 30px;
-      border-radius: 14px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
     }
-    h2 { margin-top: 10px; }
+
+    h2 {
+      margin-top: 10px;
+      font-size: 1.8rem;
+    }
+
     .back {
       color: #38bdf8;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
+
     .file-box {
-      margin-top: 20px;
-      padding: 16px;
+      margin-top: 22px;
+      padding: 22px;
       border: 2px dashed #38bdf8;
-      border-radius: 12px;
+      border-radius: 14px;
       text-align: center;
       cursor: pointer;
+      font-size: 1.05rem;
     }
-    .file-box:hover { background: rgba(255,255,255,0.05); }
-    input[type="file"] { display: none; }
-    button {
-      width: 100%;
-      margin-top: 25px;
-      padding: 14px;
+
+    .file-box:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-list {
+      margin-top: 20px;
+    }
+
+    .file-item {
+      background: rgba(255,255,255,0.08);
+      padding: 14px 16px;
       border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+    }
+
+    .file-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .file-name span {
+      font-size: 1.3rem;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: #ff6b6b;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      color: #ff3b3b;
+    }
+
+    button.action {
+      width: 100%;
+      margin-top: 26px;
+      padding: 15px;
+      border-radius: 14px;
       border: none;
       background: #38bdf8;
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: bold;
       cursor: pointer;
+    }
+
+    button.action:hover {
+      background: #5ed0ff;
+    }
+
+    .download-again {
+      display: none;
+      background: #22c55e;
+      margin-top: 14px;
     }
   </style>
 </head>
@@ -52,24 +117,92 @@
   <h2>Merge PDFs</h2>
 
   <label class="file-box">
-    Select multiple PDF files
-    <input type="file" id="mergeFiles" multiple>
+    Click to select PDF files
+    <input type="file" id="fileInput" multiple>
   </label>
 
-  <button onclick="mergePDF()">Merge PDFs</button>
+  <div id="fileList" class="file-list"></div>
+
+  <button class="action" onclick="mergePDF()">Merge & Download</button>
+  <button id="downloadBtn" class="action download-again">Download Again</button>
 </div>
 
 <script>
+const fileInput = document.getElementById("fileInput");
+const fileListEl = document.getElementById("fileList");
+
+let dataTransfer = new DataTransfer();
+let lastBlobUrl = null;
+
+/* ADD FILES (APPEND, NOT REPLACE) */
+fileInput.addEventListener("change", () => {
+  for (const file of fileInput.files) {
+    dataTransfer.items.add(file);
+  }
+  fileInput.files = dataTransfer.files;
+  renderFiles();
+});
+
+/* RENDER FILES */
+function renderFiles() {
+  fileListEl.innerHTML = "";
+
+  Array.from(dataTransfer.files).forEach((file, index) => {
+    const div = document.createElement("div");
+    div.className = "file-item";
+    div.innerHTML = `
+      <div class="file-name">
+        <span>📄</span>${file.name}
+      </div>
+      <button class="remove-btn" onclick="removeFile(${index})">❌</button>
+    `;
+    fileListEl.appendChild(div);
+  });
+}
+
+/* REMOVE ONLY ONE FILE */
+function removeFile(index) {
+  dataTransfer.items.remove(index);
+  fileInput.files = dataTransfer.files;
+  renderFiles();
+}
+
+/* FORCE DOWNLOAD */
+function forceDownload(blobUrl, filename) {
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* MERGE */
 async function mergePDF() {
-  const files = mergeFiles.files;
-  if (files.length < 2) return alert("Select at least 2 PDFs");
+  if (dataTransfer.files.length < 2) {
+    alert("Select at least 2 PDFs");
+    return;
+  }
 
   const fd = new FormData();
-  for (const f of files) fd.append("files", f);
+  Array.from(dataTransfer.files).forEach(file =>
+    fd.append("files", file)
+  );
 
-  const res = await fetch("/api/pdf/merge", { method: "POST", body: fd });
+  const res = await fetch("/api/pdf/merge", {
+    method: "POST",
+    body: fd
+  });
+
   const blob = await res.blob();
-  window.open(URL.createObjectURL(blob));
+  const blobUrl = URL.createObjectURL(blob);
+
+  forceDownload(blobUrl, "merged.pdf");
+
+  lastBlobUrl = blobUrl;
+  const btn = document.getElementById("downloadBtn");
+  btn.style.display = "block";
+  btn.onclick = () => forceDownload(lastBlobUrl, "merged.pdf");
 }
 </script>
 

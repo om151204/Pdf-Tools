@@ -1,50 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Images to PDF</title>
-  <style>
-    body { background:#0f2027; color:white; font-family:"Segoe UI"; }
-    .container {
-      max-width:520px; margin:70px auto; background:#203a43;
-      padding:30px; border-radius:14px; box-shadow:0 15px 40px rgba(0,0,0,0.4);
-    }
-    .back { color:#38bdf8; text-decoration:none; }
-    .file-box {
-      margin-top:20px; padding:16px; border:2px dashed #38bdf8;
-      border-radius:12px; text-align:center; cursor:pointer;
-    }
-    input { display:none; }
-    button {
-      width:100%; margin-top:25px; padding:14px;
-      border-radius:12px; border:none; background:#38bdf8;
-      font-weight:bold; cursor:pointer;
-    }
-  </style>
+<title>Images to PDF</title>
+<style>
+body{background:#0f2027;color:#fff;font-family:Segoe UI}
+.container{max-width:600px;margin:70px auto;background:#203a43;padding:30px;border-radius:16px}
+.back{color:#38bdf8;text-decoration:none}
+.file-box{margin:20px 0;padding:20px;border:2px dashed #38bdf8;border-radius:14px;text-align:center;cursor:pointer}
+input{display:none}
+.file-item{background:rgba(255,255,255,.08);padding:12px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
+button{width:100%;padding:14px;border:none;border-radius:12px;background:#38bdf8;font-weight:bold;cursor:pointer}
+.download-again{display:none;background:#22c55e;margin-top:12px}
+</style>
 </head>
 <body>
 
 <div class="container">
-  <a class="back" href="/">← Back to Home</a>
-  <h2>Images → PDF</h2>
+<a class="back" href="/">← Back</a>
+<h2>Images → PDF</h2>
 
-  <label class="file-box">
-    Select image files
-    <input type="file" id="imagesToPdfFiles" multiple>
-  </label>
+<label class="file-box">
+Select Images
+<input type="file" id="fileInput" multiple accept="image/*">
+</label>
 
-  <button onclick="imagesToPDF()">Convert</button>
+<div id="fileList"></div>
+
+<button onclick="convert()">Convert & Download</button>
+<button id="downloadBtn" class="download-again">Download Again</button>
 </div>
 
 <script>
-async function imagesToPDF() {
-  const fd = new FormData();
-  for (const f of imagesToPdfFiles.files) fd.append("files", f);
+const input=document.getElementById("fileInput");
+const list=document.getElementById("fileList");
+let dt=new DataTransfer(), lastUrl=null;
 
-  const res = await fetch("/api/pdf/from-images", { method:"POST", body:fd });
-  const blob = await res.blob();
-  window.open(URL.createObjectURL(blob));
+input.addEventListener("change",()=>{
+  [...input.files].forEach(f=>dt.items.add(f));
+  input.files=dt.files;
+  render();
+});
+
+function render(){
+  list.innerHTML="";
+  [...dt.files].forEach((f,i)=>{
+    list.innerHTML+=`<div class="file-item">🖼 ${f.name}
+    <button onclick="remove(${i})">❌</button></div>`;
+  });
+}
+function remove(i){
+  dt.items.remove(i);
+  input.files=dt.files;
+  render();
+}
+function forceDownload(url,name){
+  const a=document.createElement("a");
+  a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+}
+async function convert(){
+  if(!dt.files.length)return alert("Select images");
+  const fd=new FormData();
+  [...dt.files].forEach(f=>fd.append("files",f));
+  const res=await fetch("/api/pdf/from-images",{method:"POST",body:fd});
+  const blob=await res.blob();
+  const url=URL.createObjectURL(blob);
+  forceDownload(url,"images.pdf");
+  lastUrl=url;
+  downloadBtn.style.display="block";
+  downloadBtn.onclick=()=>forceDownload(lastUrl,"images.pdf");
 }
 </script>
-
 </body>
 </html>

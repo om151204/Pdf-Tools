@@ -1,49 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PDF to Images</title>
-  <style>
-    body { background:#0f2027; color:white; font-family:"Segoe UI"; }
-    .container {
-      max-width:520px; margin:70px auto; background:#203a43;
-      padding:30px; border-radius:14px; box-shadow:0 15px 40px rgba(0,0,0,0.4);
-    }
-    .back { color:#38bdf8; text-decoration:none; }
-    .file-box {
-      margin-top:20px; padding:16px; border:2px dashed #38bdf8;
-      border-radius:12px; text-align:center; cursor:pointer;
-    }
-    input { display:none; }
-    button {
-      width:100%; margin-top:25px; padding:14px;
-      border-radius:12px; border:none; background:#38bdf8;
-      font-weight:bold; cursor:pointer;
-    }
-  </style>
+<title>PDF to Images</title>
+<style>
+body{background:#0f2027;color:#fff;font-family:Segoe UI}
+.container{max-width:500px;margin:70px auto;background:#203a43;padding:30px;border-radius:16px}
+.back{color:#38bdf8;text-decoration:none}
+.file-box{margin:20px 0;padding:20px;border:2px dashed #38bdf8;border-radius:14px;text-align:center;cursor:pointer}
+input{display:none}
+.file-item{background:rgba(255,255,255,.08);padding:12px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between}
+button{width:100%;padding:14px;border:none;border-radius:12px;background:#38bdf8;font-weight:bold}
+</style>
 </head>
 <body>
 
 <div class="container">
-  <a class="back" href="/">← Back to Home</a>
-  <h2>PDF → Images</h2>
+<a class="back" href="/">← Back</a>
+<h2>PDF → Images</h2>
 
-  <label class="file-box">
-    Select PDF file
-    <input type="file" id="pdfToImagesFile">
-  </label>
+<label class="file-box">
+Select PDF
+<input type="file" id="fileInput" accept="application/pdf">
+</label>
 
-  <button onclick="pdfToImages()">Convert</button>
+<div id="fileList"></div>
+<button onclick="convert()">Convert</button>
 </div>
 
 <script>
-async function pdfToImages() {
-  const fd = new FormData();
-  fd.append("files", pdfToImagesFile.files[0]);
+const input=document.getElementById("fileInput");
+const list=document.getElementById("fileList");
+let file=null;
 
-  await fetch("/api/pdf/to-images", { method:"POST", body:fd });
-  alert("Images saved in output folder");
+input.addEventListener("change",()=>{
+  file=input.files[0];
+  render();
+});
+
+function render(){
+  list.innerHTML=file?`<div class="file-item">📄 ${file.name}
+  <button onclick="remove()">❌</button></div>`:"";
+}
+function remove(){file=null;input.value="";render();}
+
+async function convert(){
+  if(!file)return alert("Select PDF");
+  const fd=new FormData();
+  fd.append("files",file);
+  await fetch("/api/pdf/to-images",{method:"POST",body:fd});
+  alert("Images generated successfully");
 }
 </script>
-
 </body>
 </html>
