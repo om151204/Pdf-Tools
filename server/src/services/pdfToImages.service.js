@@ -1,26 +1,26 @@
-const path = require("path");
-const fs = require("fs");
-const pdf = require("pdf-poppler");
+const archiver = require("archiver");
 
-const outputDir = "output";
-if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+function sendImagesAsZip(res, imagesDir) {
+  return new Promise((resolve, reject) => {
+    const zipName = `pdf-images-${Date.now()}.zip`;
 
-async function pdfToImages(file) {
-  const opts = {
-    format: "png",
-    out_dir: outputDir,
-    out_prefix: `page-${Date.now()}`,
-    page: null
-  };
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${zipName}"`
+    );
 
-  await pdf.convert(file.path, opts);
+    const archive = archiver("zip", { zlib: { level: 9 } });
 
-  const images = fs
-    .readdirSync(outputDir)
-    .filter(f => f.endsWith(".png"))
-    .map(f => path.join(outputDir, f));
+    archive.on("error", err => reject(err));
+    res.on("close", () => resolve());
 
-  return images;
+    archive.pipe(res);
+    archive.directory(imagesDir, false);
+
+    // ❗ DO NOT await this
+    archive.finalize();
+  });
 }
 
-module.exports = { pdfToImages };
+module.exports = sendImagesAsZip;

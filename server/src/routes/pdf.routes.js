@@ -1,33 +1,22 @@
+console.log("uploadImages:", uploadImages);
 const express = require("express");
-const upload = require("../middlewares/upload.middleware");
+const router = express.Router();
+
+const uploadPdf = require("../middlewares/uploadPdf");
+const uploadImages = require("../middlewares/uploadimages");
+
 const {
   mergePDF,
   splitPdfController,
   compressPdfController,
-  imagesToPdfController,
-  pdfToImagesController
+  pdfToImages,
+  imagesToPdfController
 } = require("../controllers/pdf.controller");
 
-const router = express.Router();
-
-router.post("/merge", upload.array("files", 10), mergePDF);
-router.post("/split", upload.array("files", 1), splitPdfController);
-router.post("/compress", upload.array("files", 1), compressPdfController);
-router.post("/to-images", upload.array("files",1),pdfToImagesController);
-router.post("/from-images",upload.array("files",10),imagesToPdfController)
-
-const fs = require("fs");
-const path = require("path");
-
-router.get("/files", (req, res) => {
-  const dir = path.join(__dirname, "../../output");
-  const files = fs.existsSync(dir) ? fs.readdirSync(dir) : [];
-  res.json(files);
-});
-
+router.post("/merge", uploadPdf.array("files"), mergePDF);
+router.post("/split", uploadPdf.array("files"), splitPdfController);
+router.post("/compress", uploadPdf.array("files"), compressPdfController);
+router.post("/to-images", uploadPdf.array("files"), pdfToImages);
+router.post("/from-images", uploadImages.array("files"), imagesToPdfController);
 
 module.exports = router;
-
-router.get("/test", (req, res) => {
-  res.json({ status: "PDF routes working" });
-});
